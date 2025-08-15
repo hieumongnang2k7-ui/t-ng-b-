@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chúc mừng BÉ MIN — Sao & 6 lớp lời chúc</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:#000;
+  overflow:hidden;
+  font-family: 'Dancing Script', cursive;
+  color:#fff;
+}
+
+/* Sao nền (sáng hơn một chút nhưng vẫn kém chữ) */
+.stars, .twinkle{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-repeat:repeat;opacity:1;
+}
+.stars{
+  background-image: radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.95) 50%, transparent 51%),
+                    radial-gradient(1.5px 1.5px at 80px 90px, rgba(255,255,255,0.9) 50%, transparent 51%),
+                    radial-gradient(1px 1px at 130px 60px, rgba(255,255,255,0.85) 50%, transparent 51%),
+                    radial-gradient(1.5px 1.5px at 200px 20px, rgba(255,255,255,0.95) 50%, transparent 51%),
+                    radial-gradient(1px 1px at 260px 160px, rgba(255,255,255,0.9) 50%, transparent 51%);
+  background-size: 300px 200px;
+  filter: drop-shadow(0 0 5px rgba(255,255,255,0.85));
+}
+.twinkle::before, .twinkle::after{
+  content:'';position:absolute;inset:0;background-repeat:repeat;opacity:0.95;
+  background-image: radial-gradient(3px 3px at 40px 120px, rgba(255,255,255,1) 50%, transparent 51%),
+                    radial-gradient(4px 4px at 220px 80px, rgba(255,255,255,0.98) 50%, transparent 51%),
+                    radial-gradient(2.5px 2.5px at 120px 40px, rgba(255,255,255,0.95) 50%, transparent 51%);
+  background-size: 400px 300px;
+  animation: twinkle 4s linear infinite alternate;
+  filter: blur(0.2px);
+}
+.twinkle::after{animation-duration:6s;opacity:0.75}
+@keyframes twinkle{from{opacity:0.55;transform:scale(0.985)}to{opacity:1;transform:scale(1.02)}}
+
+/* Sao rơi chậm (sáng hơn trước nhưng vẫn thấp hơn chữ) */
+.falling-star{
+  position:absolute;
+  width:3px;height:3px;
+  background:rgba(255,255,255,0.95);
+  border-radius:50%;
+  box-shadow:
+    0 0 10px rgba(255,255,255,0.95),
+    0 0 18px rgba(255,255,255,0.6);
+  filter: blur(0.2px);
+  animation: starFall linear infinite;
+}
+@keyframes starFall{
+  0%{transform:translateY(-20px);opacity:0}
+  10%{opacity:1}
+  90%{opacity:1}
+  100%{transform:translateY(110vh);opacity:0}
+}
+
+/* Cảnh 3D */
+.scene{
+  position:relative;
+  width:100%;
+  height:100%;
+  perspective:1200px;
+  transform-style:preserve-3d;
+  transform-origin:center center;
+  z-index:1;
+}
+.layer{
+  position:absolute;
+  top:0;left:0;width:100%;height:100%;
+  transform-style:preserve-3d;
+}
+.msg{
+  position:absolute;
+  white-space:nowrap;
+  padding:8px 14px;
+  border-radius:10px;
+  font-size:22px;
+  background:transparent;
+  color:#fff;
+  /* Chữ sáng mạnh hơn sao: nhiều lớp halo trắng */
+  text-shadow:
+    0 0 2px rgba(255,255,255,0.95),
+    0 0 6px rgba(255,255,255,0.95),
+    0 0 14px rgba(255,255,255,0.9),
+    0 0 26px rgba(255,255,255,0.75);
+  animation: fall linear infinite;
+}
+/* Cụm hồng nổi bật hơn chữ thường */
+.msg .pink{
+  color:#ff79c6; /* hồng ngọt */
+  text-shadow:
+    0 0 2px rgba(255,128,192,1),
+    0 0 8px rgba(255,128,192,0.95),
+    0 0 18px rgba(255,128,192,0.9),
+    0 0 34px rgba(255,128,192,0.85),
+    0 0 48px rgba(255,128,192,0.7),
+    0 0 64px rgba(255,128,192,0.55);
+}
+@keyframes fall{
+  0%{transform: translateY(-140%); opacity:0}
+  5%{opacity:1}
+  95%{opacity:1}
+  100%{transform: translateY(120%); opacity:0}
+}
+
+/* tốc độ chữ */
+.layer[data-speed='1'] .msg{animation-duration:12s}
+.layer[data-speed='2'] .msg{animation-duration:14s}
+.layer[data-speed='3'] .msg{animation-duration:16s}
+.layer[data-speed='4'] .msg{animation-duration:18s}
+.layer[data-speed='5'] .msg{animation-duration:20s}
+.layer[data-speed='6'] .msg{animation-duration:22s}
+
+@media (max-width:700px){
+  .msg{font-size:18px;max-width:90%}
+}
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="twinkle"></div>
+
+<div class="scene" id="scene"></div>
+
+<!-- Nhạc autoplay -->
+<iframe id="ytplayer" style="display:none" width="0" height="0"
+  src="https://www.youtube.com/embed/UWJcJmn4N2w?autoplay=1&mute=1&controls=0&loop=1&playlist=UWJcJmn4N2w&modestbranding=1&iv_load_policy=3"
+  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+<script>
+const messages = [
+  "Chúc chị MIN và bé gái luôn mạnh khỏe, hạnh phúc.",
+  "Bé MIN sẽ mang cả thế giới màu hồng đến nhà mình.",
+  "Chúc chị ngủ ngon và có thời gian cho bản thân.",
+  "Chúc bé lớn lên ngoan ngoãn, hay cười, thông minh.",
+  "Mong MIN bé có giấc ngủ êm ái và những giây phút ngọt ngào.",
+  "Chúc mẹ mau khỏe, sữa về đủ cho bé bú.",
+  "Em luôn bên cạnh khi cần giúp đỡ.",
+  "Chúc MIN có tương lai tươi sáng như vì sao trên trời.",
+  "Mỗi ngày tràn ngập tiếng cười và tình yêu thương.",
+  "Chúc chị kiên nhẫn và tận hưởng từng khoảnh khắc bé lớn.",
+  "Bé sẽ là phép màu nhỏ khiến cả nhà rạng rỡ.",
+  "Mong bé khoẻ mạnh, thông minh và hiền hậu.",
+  "Chúc cả gia đình luôn đầy ắp tiếng cười và yên bình.",
+  "Em hứa sẽ chơi cùng bé MIN khi bé lớn.",
+  "Yêu chị và bé MIN nhiều lắm — chúc mừng gia đình mình!"
+];
+
+const scene = document.getElementById('scene');
+const layerCount = 6;
+for(let i=1;i<=layerCount;i++){
+  const layer = document.createElement('div');
+  layer.className = 'layer';
+  layer.dataset.speed = i;
+  const depth = (i - (layerCount/2)) * 200; // tăng độ dày
+  layer.style.transform = `translateZ(${depth}px)`;
+  scene.appendChild(layer);
+}
+
+// helper: tô hồng "BÉ MIN" và "BÉ" theo yêu cầu
+function highlight(text){
+  // thay "bé min" (mọi kiểu) -> BÉ MIN hồng
+  let t = text.replace(/bé\s*min/gi, '<span class="pink">BÉ MIN</span>');
+  // thay đơn lẻ "min" -> BÉ MIN hồng
+  t = t.replace(/\bmin\b/gi, '<span class="pink">BÉ MIN</span>');
+  // thay đơn lẻ "bé" -> BÉ hồng
+  t = t.replace(/\bbé\b/gi, '<span class="pink">BÉ</span>');
+  return t;
+}
+
+// phân bố đều, xen kẽ trái-phải để không lệch
+const layers = Array.from(document.querySelectorAll('.layer'));
+let li = 0;
+messages.forEach((msg, idx)=>{
+  const msgEl = document.createElement('div');
+  msgEl.className = 'msg';
+  msgEl.innerHTML = highlight(msg);
+  const baseDelay = (idx%3) * 1.2 + Math.floor(idx/3)*0.4;
+  msgEl.style.animationDelay = (baseDelay + (li*0.6)) + 's';
+
+  const side = (idx % 2 === 0) ? 1 : -1; // xen kẽ trái/phải
+  const xOffset = side * (Math.random()*25); // ±25vw
+  msgEl.style.left = `calc(50% + ${xOffset}vw)`;
+
+  // Mỗi câu bắt đầu ở vị trí dọc khác nhau (để phủ khung)
+  const yOffset = Math.random()*100; 
+  msgEl.style.top = yOffset + 'vh';
+
+  layers[li].appendChild(msgEl);
+  li = (li+1) % layers.length;
+});
+
+// sao rơi chậm
+for(let i=0;i<32;i++){
+  const star = document.createElement('div');
+  star.className = 'falling-star';
+  star.style.left = Math.random()*100 + 'vw';
+  star.style.animationDuration = (10 + Math.random()*8) + 's';
+  star.style.animationDelay = Math.random()*8 + 's';
+  document.body.appendChild(star);
+}
+
+// xoay 3D bằng chuột/tay
+let isDown=false, startX=0, startY=0, rotX=10, rotY=-10;
+function applyRotation(){ scene.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)` }
+applyRotation();
+function down(e){ isDown=true; startX = (e.touches? e.touches[0].clientX : e.clientX); startY = (e.touches? e.touches[0].clientY : e.clientY); }
+function move(e){ if(!isDown) return; const x = (e.touches? e.touches[0].clientX : e.clientX); const y = (e.touches? e.touches[0].clientY : e.clientY); const dx = x - startX, dy = y - startY; rotY += dx * 0.15; rotX -= dy * 0.12; startX = x; startY = y; applyRotation(); }
+function up(){ isDown=false }
+scene.addEventListener('mousedown', down);
+window.addEventListener('mousemove', move);
+window.addEventListener('mouseup', up);
+scene.addEventListener('touchstart', down, {passive:true});
+window.addEventListener('touchmove', move, {passive:true});
+window.addEventListener('touchend', up);
+
+// nhạc auto bật
+window.addEventListener('load', ()=>{
+  const iframe = document.getElementById('ytplayer');
+  setTimeout(()=>{ try{ iframe.src = iframe.src.replace('mute=1','mute=0'); }catch(e){} }, 1000);
+});
+document.addEventListener('click', ()=>{
+  const iframe = document.getElementById('ytplayer');
+  if(iframe.src.includes('mute=1')){
+    iframe.src = iframe.src.replace('mute=1','mute=0');
+  }
+},{once:true});
+</script>
+</body>
+</html>
